@@ -1,1 +1,6 @@
+app/config/parameters.yml
 vendor/
+var/
+!var/cache/.gitkeep
+!var/logs/.gitkeep
+!var/sessions/.gitkeep
