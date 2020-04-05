@@ -2,12 +2,26 @@
 <html>
     <head>
         <meta charset="UTF-8" />
-        <title>{% block title %}Welcome!{% endblock %}</title>
+        <title>{% block title %}Currency Monitor{% endblock %}</title>
         {% block stylesheets %}{% endblock %}
         <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
+        <link rel="stylesheet" href="{{ asset('js/jqueryui/themes/base/jquery-ui.min.css') }}">
+        <link rel="stylesheet" href="{{ asset('css/bootstrap.min.css') }}">
+        <link rel="stylesheet" href="{{ asset('css/styles.css') }}">
     </head>
     <body>
-        {% block body %}{% endblock %}
-        {% block javascripts %}{% endblock %}
+        {% block body %}
+            <header>
+                <ul id='navbar'>
+                    <li><a href="{{ url('homepage') }}">Home</a></li>
+                    <li><a href="{{ url('monitoring') }}">Monitoring</a></li>
+                </ul>
+            </header>
+        {% endblock %}
+        {% block javascripts %}
+        <script type="text/javascript" src="{{ asset('js/jquery/jquery.min.js') }}"></script>
+        <script type="text/javascript" src="{{ asset('js/jqueryui/jquery-ui.min.js') }}"></script>
+        <script type="text/javascript" src="{{ asset('js/bootstrap.min.js') }}"></script>
+        {% endblock %}
     </body>
 </html>

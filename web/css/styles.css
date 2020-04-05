@@ -1,0 +1,92 @@
+.center-element {
+    margin: auto;
+    width: 80%;
+    padding-top: 10px;
+}
+
+header {
+    background-color: #333;
+}
+
+#navbar {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #333;
+    width: 80%;
+    margin:auto;
+}
+
+#navbar li {
+    float: left;
+}
+
+#navbar li a {
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+
+#navbar li a:hover {
+    background-color: #111;
+}
+
+.u-tab {
+    display: inline-block;
+    line-height: 28px;
+    font-weight: bold;
+    padding-left: 5px;
+    padding-right: 5px;
+    cursor: pointer;
+    color: #090959;
+}
+
+.list-group {
+    overflow-y: scroll;
+    height: 250px;
+}
+
+.wrapped-element {
+    border-radius: 2px;
+    border-color: black;
+}
+
+/* Bootstrap glyphicon links */
+@font-face {
+  font-family: 'Glyphicons Halflings';
+  src: url('//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/fonts/glyphicons-halflings-regular.eot');
+  src: url('//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/fonts/glyphicons-halflings-regular.eot?#iefix') format('embedded-opentype'),
+       url('//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/fonts/glyphicons-halflings-regular.woff2') format('woff2'),
+       url('//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/fonts/glyphicons-halflings-regular.woff') format('woff'),
+       url('//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/fonts/glyphicons-halflings-regular.ttf') format('truetype'),
+       url('//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/fonts/glyphicons-halflings-regular.svg#glyphicons_halflingsregular') format('svg');
+}
+
+.glyphicon {
+    position: relative;
+    top: 1px;
+    display: inline-block;
+    font: normal normal 16px/1 'Glyphicons Halflings';
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-font-smoothing: antialiased;
+    margin-right: 4px;
+}
+
+/* Glyphicons below */
+.glyphicon-triangle-bottom:after {
+    content: '\e252';
+    color: red;
+}
+
+.glyphicon-triangle-top:after {
+    content: '\e253';
+    color: green;
+}
+
+.glyphicon-resize-horizontal:after {
+    content:"\e120";
+    color: #333;
+}

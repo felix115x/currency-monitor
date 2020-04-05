@@ -1,0 +1,181 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+{{ parent() }}
+<div class='center-element'>
+    <h1>Currency Exchange Rate Inspector</h1>
+    <hr>
+    <div id="wrapper" class='row'>
+        <div class="col-sm-5">
+            <h3>Exchange Rate Monitor</h3>
+            <div id="change_rates">
+                <p>Records last updated: {{ last_updated }} </p>
+                <ul class="list-group"></ul>
+                <hr>
+                <h3>Currency Converter</h3>
+                <div>
+                    <form class="form">
+                        <div class='d-block'>
+                            <input id='calculator' type='text' value='1' maxlength='10'>
+                        </div>
+                        <div id='from' class='d-inline'>EUR</div>
+                        <a id='switch_curr' role="button" class='btn btn-basic btn-sm'><span class='glyphicon glyphicon-resize-horizontal'></span></a>
+                        <div id='to' class='d-inline'>
+                            <select id="currency_selector">
+                                {% for c in currencies %}
+                                    <option value='{{ c }}'>{{ c }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <h4 id='converted_amount'></h4>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-6">
+            <h3>Exchange Rates</h3>
+
+            <div id="currency_list">
+                {% for date in recent_dates %}
+                    <div class='u-tab' onclick='changeDate("{{ date['guid'] }}")'>{{ date['dateUpdated']|date('Y-m-d') }}</div>
+                {% endfor %}
+                <input type='hidden' id='date_picker'>
+                <div class='u-tab float-right' onclick='selectCalendar()'>Select Date</div>
+
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Currency</th>
+                            <th>Rate</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for currency in exchange_rates %}
+                            <tr>
+                                <td>{{ currency.code }}</td>
+                                <td>{{ currency.rate }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block javascripts %}
+{{ parent() }}
+<script>
+
+$('document').ready(function() {
+    $('#date_picker').datepicker({
+        dateFormat: 'yy-mm-dd'
+    });
+    getChangeRates();
+
+    let convertForward = true;
+    $('#switch_curr').click(function () {
+        let e = $('#from').html();
+        $('#from').html($('#to').html());
+        $('#to').html(e);
+        convertForward = !convertForward;
+    });
+
+    let rateList = {{ exchange_rates|json_encode|raw }};
+    const calculate = function () {
+        let from = convertForward ? $('#from').text() : $('#currency_selector').val();
+        let to = convertForward ? $('#currency_selector').val() : $('#to').text();
+
+        let fromAmount = $('#calculator').val();
+        let toRate = rateList.find( o => o.code === (convertForward ? to : from)).rate;
+
+        let amount = fromAmount * (convertForward ? toRate : 1 / toRate);
+
+        $('#converted_amount').text(`${amount.toFixed(2)} ${to}`);
+    };
+
+    $('#calculator').keyup(calculate);
+    $('#switch_curr').click(calculate);
+    $('#currency_selector').change(calculate);
+});
+
+function changeDate(guid) {
+    $.ajax({
+        url: '{{ path('retrieve_exchange_rates') }}',
+        type: 'POST',
+        data: { 'guid': guid },
+        dataType: 'json',
+        async: true,
+        success: function(data, status) {
+            $('#currency_list table tbody').empty();
+            data.forEach(function(item, index) {
+                $('#currency_list table tbody')
+                    .append('<tr>'
+                        + '<td>' + item.code + '</td>'
+                        + '<td>' + item.rate + '</td></tr>');
+            });
+        },
+        error: function(data) {
+            console.log('Ajax Error');
+        }
+    });
+}
+
+function selectCalendar() {
+    $('#date_picker').datepicker('show');
+    $('#date_picker').change(function() {
+        let requestDate = $('#date_picker').val();
+        $.ajax({
+            url: '{{ path('retrieve_exchange_rates_by_date') }}',
+            type: 'POST',
+            data: {'date': requestDate },
+            dataType: 'json',
+            async: true,
+            success: function(data, status) {
+                if (status === 'success') {
+                    response = JSON.parse(data.rawData);
+                    $('#currency_list table tbody').empty();
+                    response.forEach(function(item, index) {
+                        $('#currency_list table tbody')
+                            .append('<tr>'
+                                + '<td>' + item.code + '</td>'
+                                + '<td>' + item.rate + '</td></tr>');
+                    });
+                } else {
+                    alert('No records were found on ' + requestDate);
+                }
+            },
+            error: function(data) {
+                console.log('Ajax Error');
+            }
+        });
+    });
+}
+
+function getChangeRates() {
+    $.ajax({
+        url: '{{ path('retrieve_tracked_changes') }}',
+        type: 'GET',
+        dataType: 'json',
+        async: true,
+        success: function(data, status) {
+            data.forEach(function(item, index) {
+                iconClass = item.change < 0
+                    ? 'glyphicon glyphicon-triangle-bottom'
+                    : 'glyphicon glyphicon-triangle-top';
+                $('#change_rates ul')
+                    .append('<li class="list-group-item">'
+                        + item.code
+                        + '<span class="' + iconClass + ' float-right">'
+                        + item.rate + '</span></li>');
+            });
+        },
+        error: function(data) {
+            console.log('Ajax Error');
+        }
+    });
+}
+</script>
+{% endblock %}
