@@ -27,7 +27,7 @@ class HomeController extends Controller
         $currencies = $currencyService->getCurrencyData();
 
         return $this->render('home/index.html.twig', [
-            'exchange_rates' => $rates, // array_slice($rates, 0, 10),
+            'exchange_rates' => $rates,
             'last_updated' => $lastUpdated,
             'recent_dates' => $recentDates,
             'currencies' => array_column($currencies, 'code'),

@@ -10,6 +10,7 @@ use AppBundle\Service\CurrencyService;
 
 class MonitoringPlotController extends Controller
 {
+    const TIMELINE_FORMAT = 'd-m-Y';
     /**
      * @Route("/monitoring", name="monitoring")
      */

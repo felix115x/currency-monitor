@@ -14,7 +14,14 @@
         </div>
         <div class="col-sm-4">
             <h3>Currencies</h3>
-
+            <ul class="list-group" id='selected_currencies'>
+                {% for c in currencies %}
+                    <li class="list-group-item">
+                        <label for='{{ c }}'>{{ c }}</label>
+                        <input class='float-right' type="checkbox" id='{{ c }}' name='{{ c }}'>
+                    </li>
+                {% endfor %}
+            </ul>
         </div>
     </div>
 </div>
@@ -23,65 +30,66 @@
 {{ parent() }}
 <script src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js'></script>
 <script>
+const ctx = document.getElementById('exchange_rate_plot').getContext('2d');
+
 let exchangeRates = {{ exchange_rates|json_encode|raw }};
 let recentDates = {{ recent_dates|json_encode|raw }};
-let currencies = {{ currencies|json_encode|raw }};
-
-console.log(currencies);
 
 let dateLabels = recentDates.map( d => d.dateUpdated.date ).reverse();
 
-console.log(dateLabels);
-let rates = exchangeRates.map(d => {
-    return {'guid': d.guid, 'jsonData': JSON.parse(d.rawData)};
-});
+generatePlot = function () {
+    let currencies = [];
+    $('#selected_currencies input:checked').each(function() {
+        currencies.push($(this).attr('name'));
+    });
 
-currencies = ['USD', 'AUD', 'CAD'];
+    let rates = exchangeRates.map(d => {
+        return {'guid': d.guid, 'jsonData': JSON.parse(d.rawData)};
+    });
 
-let ratesByCurrency = currencies.map(c => {
-    return {
-        'label': c,
-        'data': rates.map(r => {
-            return r.jsonData.filter(d => {
-                if (d.code === c) {
-                    return d.rate;
-                }
-            })[0].rate;
-        }).reverse(),
-        'borderColor': getRandomColor(),
-        'backgroundColor': 'transparent'
-    };
-});
+    let ratesByCurrency = currencies.map(c => {
+        return {
+            'label': c,
+            'data': rates.map(r => {
+                return r.jsonData.filter(d => {
+                    if (d.code === c) {
+                        return d.rate;
+                    }
+                })[0].rate;
+            }).reverse(),
+            'borderColor': getRandomColor(),
+            'backgroundColor': 'transparent'
+        };
+    });
 
-
-console.log(ratesByCurrency);
-
-const ctx = document.getElementById('exchange_rate_plot').getContext('2d');
-const myChart = new Chart(ctx, {
-    type: 'line',
-    data: {
-        datasets: ratesByCurrency,
-        labels: dateLabels
-    },
-    options: {
-        scales: {
-            yAxes: [{
-                ticks: {
-                    beginAtZero: true
-                }
-            }]
+    let myChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            datasets: ratesByCurrency,
+            labels: dateLabels
+        },
+        options: {
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero: true
+                    }
+                }]
+            }
         }
-    }
-});
+    });
+};
+
+$('document').ready(generatePlot);
+$('#selected_currencies input').change(generatePlot);
 
 function getRandomColor() {
-    var letters = '0123456789ABCDEF';
-    var color = '#';
-    for (var i = 0; i < 6; i++) {
+    let letters = '0123456789ABCDEF';
+    let color = '#';
+    for (let i = 0; i < 6; i++) {
         color += letters[Math.floor(Math.random() * 16)];
     }
     return color;
 }
-
 </script>
 {% endblock %}
