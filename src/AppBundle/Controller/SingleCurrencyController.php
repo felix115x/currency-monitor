@@ -14,7 +14,7 @@ class SingleCurrencyController extends Controller
     const MAX_DAYS = 10; // TODO could be passed as parameter
 
     /**
-     * @Route("/currency{code}", name="currency")
+     * @Route("/currency/{code}", name="currency")
      */
     public function indexAction($code)
     {

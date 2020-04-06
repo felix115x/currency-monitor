@@ -77,8 +77,6 @@
 $('document').ready(function() {
     let table = $('#clist').DataTable();
 
-    console.log(table);
-
     $('#date_picker').datepicker({
         dateFormat: 'yy-mm-dd'
     });
@@ -121,9 +119,10 @@ function changeDate(guid) {
         success: function(data, status) {
             $('#currency_list table tbody').empty();
             data.forEach(function(item, index) {
+                let path = '{{ path('currency', {'code': 'undefined'}) }}'.replace('undefined', item.code);
                 $('#currency_list table tbody')
                     .append('<tr>'
-                        + '<td>' + item.code + '</td>'
+                        + '<td><a href="' + path + '">' + item.code + '</a></td>'
                         + '<td>' + item.rate + '</td></tr>');
             });
         },
@@ -148,9 +147,10 @@ function selectCalendar() {
                     response = JSON.parse(data.rawData);
                     $('#currency_list table tbody').empty();
                     response.forEach(function(item, index) {
+                        let path = '{{ path('currency', {'code': 'undefined'}) }}'.replace('undefined', item.code);
                         $('#currency_list table tbody')
                             .append('<tr>'
-                                + '<td>' + item.code + '</td>'
+                                + '<td><a href="' + path + '">' + item.code + '</a></td>'
                                 + '<td>' + item.rate + '</td></tr>');
                     });
                 } else {

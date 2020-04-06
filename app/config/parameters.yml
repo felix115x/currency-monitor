@@ -1,6 +1,6 @@
 # This file is auto-generated during the composer install
 parameters:
-    database_host: mysql
+    database_host: 127.0.0.1 # mysql
     database_port: 3306
     database_name: currency_monitor
     database_user: felix115x
