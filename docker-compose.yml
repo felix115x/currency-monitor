@@ -1,0 +1,31 @@
+version: '3'
+
+services:
+    cm-app:
+        build:
+            context: .
+            dockerfile: .docker/Dockerfile
+        image: cm-app
+        ports:
+            - 8080:80
+        links:
+            - mysql
+        environment:
+            DB_HOST: mysql
+            DB_DATABASE: currency_monitor
+            DB_USERNAME: felix115x
+            DB_PASSWORD: password
+
+    mysql:
+        image: mysql:5.6
+        ports:
+            - 13306:3306
+        expose:
+            - 3306
+        volumes:
+            - ./data:/docker-entrypoint-initdb.d
+        environment:
+            MYSQL_DATABASE: currency_monitor
+            MYSQL_USER: felix115x
+            MYSQL_PASSWORD: password
+            MYSQL_ROOT_PASSWORD: password
