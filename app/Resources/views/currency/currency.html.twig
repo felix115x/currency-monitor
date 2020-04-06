@@ -1,0 +1,64 @@
+{% extends 'base.html.twig' %}
+{% block stylesheets %}
+{{ parent() }}
+{% endblock %}
+
+{% block body %}
+{{ parent() }}
+<div class='center-element'>
+    <h1>Currency Exchange Rate Inspector</h1>
+    <hr>
+    <div id="wrapper" class='row'>
+        <div class="col-sm-4">
+            <h3>Currency growth dynamics</h3>
+            <p>Shows currency exchange rate changes that happened recently</p>
+        </div>
+        <div class="col-sm-4">
+            <table id='clist' class="table table-striped">
+                <thead>
+                    <tr><h4>{{ code }}</h4></tr>
+                    <tr>
+                        <th>Date</th>
+                        <th>Value</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block javascripts %}
+{{ parent() }}
+<script>
+$('document').ready(function () {
+    let exchangeRates = {{ exchange_rates|json_encode|raw }};
+    let recentDates = {{ recent_dates|json_encode|raw }};
+    let currency = '{{ code }}';
+
+    let rates = exchangeRates.map(d => {
+        return {'guid': d.guid, 'jsonData': JSON.parse(d.rawData)};
+    });
+
+    let ratesByCurrency = rates.map(r => {
+        return r.jsonData.filter(d => {
+            if (d.code === currency) {
+                return d.rate;
+            }
+        })[0].rate;
+    });
+
+    let dateLabels = recentDates.map( d => d.dateUpdated.date );
+    let valueList = $('#clist tbody');
+    for (let i = 0; i < dateLabels.length; ++i) {
+        let iconClass = ratesByCurrency[i] - ratesByCurrency[i + 1] < 0
+            ? 'glyphicon glyphicon-triangle-bottom'
+            : 'glyphicon glyphicon-triangle-top';
+        valueList.append(`<tr><td>${dateLabels[i]}</td><td>${ratesByCurrency[i]} <span class='${iconClass}'></span></td></tr>`);
+    }
+});
+
+</script>
+{% endblock %}

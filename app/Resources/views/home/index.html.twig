@@ -58,7 +58,7 @@
                     <tbody>
                         {% for currency in exchange_rates %}
                             <tr>
-                                <td>{{ currency.code }}</td>
+                                <td><a href="{{ path('currency', {'code': currency.code}) }}">{{ currency.code }}</a></td>
                                 <td>{{ currency.rate }}</td>
                             </tr>
                         {% endfor %}
