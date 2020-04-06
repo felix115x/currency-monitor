@@ -8,6 +8,8 @@ services:
         image: cm-app
         ports:
             - 8080:80
+        volumes:
+            - .:/app
         links:
             - mysql
         environment:
